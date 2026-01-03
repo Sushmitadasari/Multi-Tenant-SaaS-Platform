@@ -11,7 +11,7 @@ WORKFLOW. is a full-stack SaaS ecosystem engineered for high-performance organiz
 ---
 
 ## 📽️ Project Walkthrough
-**[🎥 View the Design & Architecture Showcase](https://youtu.be/h9bwxlI3I4I)**
+**[🎥 View the Design & Architecture Showcase](https://www.youtube.com/watch?v=bPvnvoNSyfY)**
 
 ---
 
