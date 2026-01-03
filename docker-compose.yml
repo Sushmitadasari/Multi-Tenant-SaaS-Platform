@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # MANDATORY NAME: database
+  database:
+    image: postgres:15
+    container_name: database
+    environment:
+      POSTGRES_DB: saas_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # MANDATORY PORTS: 5432 -> 5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MANDATORY NAME: backend
+  backend:
+    build: ./backend
+    container_name: backend
+    # MANDATORY PORTS: 5000 -> 5000
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      # MUST use service name 'database', not 'localhost'
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: saas_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: replace_with_your_secure_secret
+      JWT_EXPIRES_IN: 24h
+      # MUST use service name 'frontend', not 'localhost' for CORS
+      FRONTEND_URL: http://frontend:3000
+    depends_on:
+      database:
+        condition: service_healthy
+    # MANDATORY: Health check must exist
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MANDATORY NAME: frontend
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    # MANDATORY PORTS: 3000 -> 3000
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser runs on host, so localhost:5000 is usually fine for client-side fetches,
+      # BUT if doing SSR, use http://backend:5000
+      REACT_APP_API_URL: http://localhost:5000/api
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  db_data:
