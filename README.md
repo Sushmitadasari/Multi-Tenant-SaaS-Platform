@@ -6,7 +6,7 @@ WORKFLOW. is a full-stack SaaS ecosystem engineered for high-performance organiz
 
 ![System Status](https://img.shields.io/badge/status-active-emerald)
 ![Environment](https://img.shields.io/badge/docker-containerized-white)
-![Design](https://img.shields.io/badge/UI-Obsidian_Emerald-10b981)
+
 
 ---
 
