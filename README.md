@@ -1,215 +1,145 @@
-# 🚀 Multi-Tenant SaaS Platform
+# ⚡ WORKFLOW. | Modern Multi-Tenant Project Engine
 
-> **A production-ready, containerized Project & Task Management System built with a strict Multi-Tenant Architecture.**
+> **An enterprise-grade, containerized Project Orchestration System featuring a custom-engineered Obsidian-Emerald Interface.**
 
-This application is a full-stack SaaS platform designed for organizations to manage teams, projects, and tasks in a completely isolated environment. It demonstrates advanced architectural patterns including **Data Isolation**, **Role-Based Access Control (RBAC)**, and **Subscription Management**.
+WORKFLOW. is a full-stack SaaS ecosystem engineered for high-performance organizations. Built with a robust **Multi-Tenant Architecture**, it ensures complete data isolation and secure scaling. This platform features a high-contrast industrial UI, moving away from generic templates to provide a focused, "command-center" experience for team collaboration.
 
-![Project Status](https://img.shields.io/badge/status-production_ready-green)
-![Docker](https://img.shields.io/badge/docker-containerized-blue)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
-
----
-
-## 📺 Video Demo
-**[🎥 Click here to watch the Project Walkthrough & Architecture Demo](https://youtu.be/h9bwxlI3I4I)**
+![System Status](https://img.shields.io/badge/status-active-emerald)
+![Environment](https://img.shields.io/badge/docker-containerized-white)
+![Design](https://img.shields.io/badge/UI-Obsidian_Emerald-10b981)
 
 ---
 
-## 🌟 Key Features
-
-1.  **🏢 Strict Tenant Isolation**
-    * Implements "Shared Database, Shared Schema" architecture.
-    * Global middleware automatically enforces `where: { tenantId }` on every database query to prevent data leakage.
-2.  **🔐 Role-Based Access Control (RBAC)**
-    * **Super Admin:** System-wide visibility, manages tenants and plans (Tenant ID is NULL).
-    * **Tenant Admin:** Full control over their organization's users and projects.
-    * **Standard User:** Restricted access to assigned tasks and projects.
-3.  **💳 Subscription Plan Limits**
-    * Enforces `max_users` and `max_projects` limits based on the tenant's plan (Free, Pro, Enterprise).
-    * Prevents resource creation (HTTP 403) when limits are exceeded.
-4.  **🔑 Secure Authentication**
-    * Stateless JWT (JSON Web Token) authentication with 24-hour expiry.
-    * Passwords securely hashed using `bcrypt`.
-5.  **🐳 Full Docker Containerization**
-    * Production-ready `docker-compose` setup.
-    * Orchestrates Database, Backend, and Frontend with a single command.
-    * **Auto-Healing:** Backend waits for Database readiness before starting.
-6.  **💾 Robust Data Persistence**
-    * Configured **Named Docker Volumes** for PostgreSQL.
-    * Data survives container restarts and shutdowns, ensuring no data loss.
-7.  **🔄 Automated Database Operations**
-    * **Zero-Touch Startup:** Migrations and Seed Data run automatically on container startup.
-    * No manual SQL execution required.
-8.  **🛡️ Security Best Practices**
-    * **Helmet:** Sets secure HTTP headers.
-    * **CORS:** Configured for frontend-backend communication.
-    * **Input Validation:** Strict typing on API endpoints.
-9.  **📱 Modern Responsive UI**
-    * Built with **React + Vite + Tailwind CSS**.
-    * Dynamic Sidebar navigation based on user role.
-    * Real-time dashboard statistics.
+## 📽️ Project Walkthrough
+**[🎥 View the Design & Architecture Showcase](https://youtu.be/h9bwxlI3I4I)**
 
 ---
 
-## 🛠️ Technology Stack
+## 🌟 Strategic Capabilities
 
-### **Frontend**
-* **Framework:** React 18 (Vite Build Tool)
-* **Language:** JavaScript (ES6+)
-* **Styling:** Tailwind CSS 3.4
-* **HTTP Client:** Axios
-* **Icons:** Lucide React
-
-### **Backend**
-* **Runtime:** Node.js v18 (Alpine Linux)
-* **Framework:** Express.js
-* **Database:** PostgreSQL 15
-* **ORM:** Sequelize
-* **Authentication:** JSON Web Tokens (JWT)
-
-### **DevOps**
-* **Containerization:** Docker & Docker Compose
-* **Orchestration:** Multi-stage builds
-* **Environment:** Alpine Linux base images for minimal footprint
-
----
-
-## 🏗️ Architecture Overview
-
-The system follows a **Three-Tier Architecture**:
-
-1.  **Presentation Layer (Frontend):** React SPA running on port `3000`.
-2.  **Application Layer (Backend):** Express REST API running on port `5000`.
-3.  **Data Layer (Database):** PostgreSQL running on port `5432`.
-
-*(See `docs/architecture.md` for the detailed system diagram)*
+1.  **🛡️ Advanced Tenant Siloing**
+    * Uses a "Shared Schema, Logical Isolation" model.
+    * Integrated data-access middleware enforces strict tenant boundaries at the database layer to prevent cross-organization leakage.
+2.  **⚖️ Precision Access Control (RBAC)**
+    * **System Root:** Full global visibility and tenant lifecycle management.
+    * **Organization Admin:** Total governance over workspace users, projects, and permissions.
+    * **Project Member:** Focused access to assigned tasks and collaborative assets.
+3.  **📊 Real-Time Analytics Dashboard**
+    * Custom-built visual telemetry for tracking project health.
+    * Automated progress ring visualizations for project completion status.
+4.  **🏗️ Containerized Deployment**
+    * Full orchestration via Docker Compose.
+    * Single-command initialization for the entire stack (PostgreSQL, Express, React).
+5.  **✨ Neo-Brutalist Industrial UI**
+    * High-contrast Dark Mode (Zinc-950) designed to reduce ocular fatigue.
+    * Emerald-500 accent system for intuitive navigation and status monitoring.
+    * Responsive Sidebar-based "Floating UI" architecture.
 
 ---
 
-## 🚀 Installation & Setup
+## 🛠️ Technology Architecture
+
+### **Frontend Core**
+* **Library:** React 18 (Vite Framework)
+* **Design System:** Custom Tailwind CSS 3.4 implementation
+* **State & Logic:** Advanced React Hooks & Context API
+* **Icons:** Lucide-React Design Set
+
+### **Backend Core**
+* **Environment:** Node.js v18 (Alpine Optimized)
+* **API Engine:** Express REST Framework
+* **Data Layer:** PostgreSQL 15 & Sequelize ORM
+* **Security:** JSON Web Tokens (JWT) & Bcrypt Encryption
+
+---
+
+## 🚀 Initialization & Deployment
 
 ### **Prerequisites**
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Running)
+* Docker Desktop (Engine version 20.10+)
 * Git
 
-### **Step-by-Step Guide**
+### **Step-by-Step Launch**
 
-**1. Clone the Repository**
+**1. Clone the Source**
 ```bash
-git clone [https://github.com/Akashkallepalli/enhanced-saas-platform.git](https://github.com/Akashkallepalli/enhanced-saas-platform.git)
-cd enhanced-saas-platform
+git clone [your-repository-url]
+cd workflow-platform
 
 ```
 
-**2. Start the Application**
-Run the following command in the root directory. This will build the images, start the containers, run migrations, and seed the database.
+**2. Boot the Ecosystem**
+The following command builds the environment and triggers automatic database migrations and seeding.
 
 ```bash
 docker-compose up -d --build
 
 ```
 
-**3. Verify Installation**
+**3. Health Verification**
 
-* **Backend:** Visit [http://localhost:5000/api/health](https://www.google.com/search?q=http://localhost:5000/api/health)
-* *Expected Response:* `{"status":"ok","database":"connected"}`
-* **Frontend:** Visit [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000)
-
-**4. Stop the Application**
-
-```bash
-docker-compose down
-
-```
-
-*(Add `-v` to `down` if you want to wipe the database volume)*
+* **API Status:** [http://localhost:5000/api/health](https://www.google.com/search?q=http://localhost:5000/api/health)
+* **Frontend Access:** [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000)
 
 ---
 
-## ⚙️ Environment Variables
+## ⚙️ Configuration Parameters
 
-The application is pre-configured for the evaluation environment. The `.env` variables are handled via `docker-compose.yml`.
+The system is pre-tuned for evaluation. Environment variables are managed via the `docker-compose.yml` manifest.
 
-| Variable | Description | Default Value |
+| Variable | Context | Default |
 | --- | --- | --- |
-| `PORT` | Backend API Port | `5000` |
-| `DB_HOST` | Database Service Name | `database` |
-| `DB_PORT` | PostgreSQL Port | `5432` |
-| `DB_NAME` | Database Name | `saas_db` |
-| `DB_USER` | Database User | `postgres` |
-| `DB_PASSWORD` | Database Password | `postgres` |
-| `JWT_SECRET` | Secret for signing tokens | `supersecretkey...` |
-| `FRONTEND_URL` | CORS Origin URL | `http://frontend:3000` |
+| `DB_HOST` | Database Service | `database` |
+| `DB_NAME` | Schema Identity | `saas_db` |
+| `JWT_SECRET` | Auth Token Signing | `custom_secure_key_...` |
+| `FRONTEND_URL` | Security Policy (CORS) | `http://frontend:3000` |
 
 ---
 
-## 📚 API Documentation
+## 📚 Core API Endpoints
 
-The backend exposes a comprehensive REST API. Full documentation is available in `docs/API.md`.
-
-**Core Endpoints:**
-
-| Method | Endpoint | Description | Access |
+| Method | Route | Description | Permission |
 | --- | --- | --- | --- |
-| `POST` | `/api/auth/login` | User login | Public |
-| `POST` | `/api/auth/register-tenant` | Register new organization | Public |
-| `GET` | `/api/projects` | List projects for tenant | Auth Required |
-| `POST` | `/api/projects` | Create new project | Tenant Admin |
-| `GET` | `/api/tenants` | List all tenants | Super Admin |
+| `POST` | `/api/auth/login` | Account Authentication | Public |
+| `POST` | `/api/auth/register-tenant` | Organization Provisioning | Public |
+| `GET` | `/api/projects` | Project Manifest Sync | Member+ |
+| `POST` | `/api/tasks` | Task Deployment | Admin |
+| `GET` | `/api/users` | Personnel Audit | Admin |
 
 ---
 
-## 🧪 Test Credentials (Pre-Seeded)
+## 🧪 Evaluation Credentials
 
-The system automatically seeds these accounts on startup. You can use them to test different roles.
+The following identities are automatically provisioned during the database seed sequence:
 
-### **1. Tenant Admin (Demo Company)**
+### **1. Organization Admin**
 
-*Full access to "Demo Company" resources.*
+* **Identity:** `admin@demo.com`
+* **Passcode:** `Demo@123`
+* **Workspace ID:** `demo`
 
-* **Email:** `admin@demo.com`
-* **Password:** `Demo@123`
-* **Subdomain:** `demo`
+### **2. Standard Member**
 
-### **2. Regular User (Demo Company)**
-
-*Restricted access. Cannot manage users or delete projects.*
-
-* **Email:** `user1@demo.com`
-* **Password:** `User@123`
-* **Subdomain:** `demo`
-
-### **3. Super Admin (System)**
-
-*System-wide access. No specific tenant.*
-
-* **Email:** `superadmin@system.com`
-* **Password:** `Admin@123`
+* **Identity:** `user1@demo.com`
+* **Passcode:** `User@123`
+* **Workspace ID:** `demo`
 
 ---
 
-## 📂 Project Structure
+## 📂 System Topography
 
 ```bash
 saas-platform/
-├── backend/                # Express.js Backend
+├── backend/              # Node.js API Infrastructure
 │   ├── src/
-│   │   ├── config/         # DB Connection
-│   │   ├── controllers/    # Business Logic
-│   │   ├── middleware/     # Auth & Isolation
-│   │   ├── models/         # Sequelize Models
-│   │   ├── routes/         # API Routes
-│   │   └── scripts/        # Migrations & Seeds
-│   └── Dockerfile
-├── frontend/               # React Frontend
+│   │   ├── middleware/   # Auth & Tenant Isolation Logic
+│   │   ├── models/       # Relational Data Schemas
+│   │   └── scripts/      # Auto-Seed & Migration Assets
+├── frontend/             # React Design Layer
 │   ├── src/
-│   │   ├── components/     # UI Components
-│   │   ├── pages/          # Route Views
-│   │   └── api/            # API Integration
-│   └── Dockerfile
-├── docs/                   # Documentation Artifacts
-├── docker-compose.yml      # Container Orchestration
-└── submission.json         # Automated Test Credentials
-
-```
+│   │   ├── components/   # Shared UI Modules
+│   │   ├── pages/        # View Logic & Routing
+│   │   └── api/          # Centralized Service Integration
+├── docker-compose.yml    # System Orchestration Manifest
+└── submission.json       # Automated Evaluation Metadata
 
