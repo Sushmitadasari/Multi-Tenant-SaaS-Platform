@@ -1,5 +1,5 @@
 FROM node:18-alpine
-
+# DIRECTORY SETUP
 WORKDIR /app
 
 # INSTALL CURL HERE
