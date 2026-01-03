@@ -1,43 +1,49 @@
-# Product Requirements Document (PRD)
+# Product Requirements Document (PRD): Project Management Platform
 
-## 👤 User Personas
-1.  **Super Admin:** System-level administrator with access to all tenants. Responsible for platform maintenance and plan management.
-2.  **Tenant Admin:** Organization-level administrator. Responsible for managing their team (users), projects, and billing.
-3.  **Standard User:** Team member who works on tasks and projects assigned to them.
+## 1. Introduction
+This project is about building a "Software as a Service" (SaaS) platform for managing projects and tasks. Think of it like a shared office building: many different companies (tenants) live in the same building, but each has its own locked office and private files that others cannot see.
 
-## ✅ Functional Requirements
+---
 
-### Authentication & Authorization
-1.  **FR-01:** System must allow new tenants to register with a unique subdomain.
-2.  **FR-02:** System must support JWT-based stateless authentication with 24-hour expiry.
-3.  **FR-03:** Users must be able to log in using their email, password, and tenant subdomain.
-4.  **FR-04:** System must support Role-Based Access Control (RBAC) with three distinct roles.
-5.  **FR-05:** Users must be able to logout, which invalidates their client-side session.
+## 2. Who is this for? (User Personas)
 
-### Tenant Management
-6.  **FR-06:** Super Admins must be able to view a paginated list of all registered tenants.
-7.  **FR-07:** System must enforce strict data isolation; tenants cannot access other tenants' data.
-8.  **FR-08:** Tenant Admins must be able to update their organization's name.
+###  The Platform Owner (Super Admin)
+- **Role:** They run the entire system.
+- **Goals:** Manage the different companies using the software and handle subscription plans.
+- **Biggest Concern:** Keeping the whole platform safe and running smoothly.
 
-### User Management
-9.  **FR-09:** Tenant Admins must be able to add new users to their organization.
-10. **FR-10:** System must prevent Tenant Admins from deleting their own account (Self-Deletion prevention).
-11. **FR-11:** System must enforce subscription limits on the number of users per tenant.
+###  The Company Manager (Tenant Admin)
+- **Role:** They run their specific organization's account.
+- **Goals:** Add their employees to the system and oversee projects.
+- **Biggest Concern:** Staying within their plan limits and making sure the right people have access to the right files.
 
-### Project & Task Management
-12. **FR-12:** Tenant Admins must be able to create new projects.
-13. **FR-13:** Users must be able to view projects only within their own tenant.
-14. **FR-14:** Users must be able to create tasks within a specific project.
-15. **FR-15:** Users must be able to update task status (Todo -> In Progress -> Done).
-16. **FR-16:** System must enforce subscription limits on the number of projects per tenant.
+###  The Team Member (End User)
+- **Role:** The person doing the actual work.
+- **Goals:** See which tasks are assigned to them and update their progress.
+- **Biggest Concern:** Knowing exactly what they need to do and when it is due.
 
-## 🚀 Non-Functional Requirements
-1.  **NFR-01 (Security):** All user passwords must be hashed using `bcrypt` before storage.
-2.  **NFR-02 (Performance):** API responses should typically be returned within 200ms.
-3.  **NFR-03 (Scalability):** The architecture must support horizontal scaling via Docker containers.
-4.  **NFR-04 (Persistence):** Database data must be persisted using Docker Volumes to survive container restarts.
-5.  **NFR-05 (Availability):** The system must include a health check endpoint for monitoring uptime.
+---
 
+## 3. What the System Must Do (Functional Requirements)
 
+- **Organization Setup:** Let new companies sign up with their own unique web address (subdomain).
+- **Secure Login:** Use digital "badges" (JWT) to verify who a user is.
+- **Role Control:** Ensure people can only do what their job title allows (Admin vs. Employee).
+- **Privacy Walls:** Automatically separate data so Company A can never see Company B's work.
+- **Team Management:** Let company managers add or remove their own staff members.
+- **Plan Limits:** Stop companies from adding more users or projects than they paid for.
+- **Project Tools:** Allow users to create projects, make tasks, and assign them to specific people.
+- **Progress Tracking:** Let users change task statuses (e.g., "To-Do" to "Done").
+- **Activity History:** Keep a "paper trail" (audit logs) of important changes for security.
+- **Quick Overviews:** Provide a dashboard with charts and stats showing how work is going.
+- **Clean Lists:** Make sure large lists of tasks load quickly by showing a few at a time (pagination).
 
+---
 
+## 4. How the System Should Perform (Non-Functional Requirements)
+
+- **Speed:** 90% of the time, the app should react to a click in less than 0.2 seconds.
+- **Security:** Passwords must be scrambled (hashed) so they can't be stolen.
+- **Capacity:** At least 100 people should be able to use the app at the exact same time without it slowing down.
+- **Reliability:** The app should be up and running 99% of the time.
+- **Device Friendly:** The app must look good and work well on both laptops and smartphones.
