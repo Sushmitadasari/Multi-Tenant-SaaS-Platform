@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { User, Tenant, sequelize, AuditLog } = require('../models');
 
-// Helper to generate JWT
+// Helper to generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'secret', {
     expiresIn: '30d',
