@@ -1,5 +1,5 @@
 const { Task, Project, AuditLog } = require('../models');
-
+// Create a new task within a project for the tenant
 exports.createTask = async (req, res) => {
   try {
     const { title, status, projectId } = req.body;
