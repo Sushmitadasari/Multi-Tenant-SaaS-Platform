@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-
+// Project model representing a project within a tenant
 const Project = sequelize.define('Project', {
   id: {
     type: DataTypes.UUID,
