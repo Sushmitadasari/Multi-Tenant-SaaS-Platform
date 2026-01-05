@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User, Tenant } = require('../models');
-
+// Middleware to protect routes and authorize users based on roles
 exports.protect = async (req, res, next) => {
   let token;
 
