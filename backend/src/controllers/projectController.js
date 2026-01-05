@@ -1,4 +1,5 @@
 const { Project, Task, User, Tenant, AuditLog } = require('../models');
+// Create a new project with tenant
 
 exports.createProject = async (req, res) => {
   try {
