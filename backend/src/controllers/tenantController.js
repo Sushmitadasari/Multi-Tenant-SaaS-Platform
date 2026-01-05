@@ -1,5 +1,5 @@
 const { Tenant, AuditLog } = require('../models');
-
+// Get tenant details by ID
 exports.getTenant = async (req, res) => {
   try {
     if (req.user.role !== 'super_admin' && req.user.tenantId !== req.params.id) {
