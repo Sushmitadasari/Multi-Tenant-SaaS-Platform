@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { User, Tenant, AuditLog } = require('../models');
-
+// Create a new user within the tenant
 exports.createUser = async (req, res) => {
   try {
     if (req.user.role !== 'tenant_admin') {
