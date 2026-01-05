@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-
+// AuditLog model to record significant actions within the system
 const AuditLog = sequelize.define('AuditLog', {
   id: {
     type: DataTypes.UUID,
