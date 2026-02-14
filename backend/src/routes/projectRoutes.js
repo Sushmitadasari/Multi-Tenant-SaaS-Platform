@@ -1,15 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const projectController = require('../controllers/projectController');
-const { protect } = require('../middleware/authMiddleware');
+// ADDED 'getProject' to the imports below
+const { createProject, listProjects, updateProject, deleteProject, getProject } = require('../controllers/projectController');
+const { verifyToken } = require('../middleware/authMiddleware');
+const { check } = require('express-validator');
 
-// Protect all routes
-router.use(protect);
+// Create
+router.post('/', 
+    verifyToken,
+    [check('name', 'Project name is required').not().isEmpty()],
+    createProject
+);
 
-router.post('/', projectController.createProject);
-router.get('/', projectController.getProjects);
-router.get('/:id', projectController.getProject);
-router.put('/:id', projectController.updateProject);
-router.delete('/:id', projectController.deleteProject); 
+// List (Get All)
+router.get('/', verifyToken, listProjects);
+
+// --- THIS WAS MISSING: Get Single Project ---
+router.get('/:projectId', verifyToken, getProject);
+// --------------------------------------------
+
+// Update
+router.put('/:projectId', verifyToken, updateProject);
+
+// Delete
+router.delete('/:projectId', verifyToken, deleteProject);
 
 module.exports = router;

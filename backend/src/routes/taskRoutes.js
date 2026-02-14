@@ -1,15 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const taskController = require('../controllers/taskController');
-const { protect } = require('../middleware/authMiddleware');
+const { createTask, listTasks, updateTaskStatus, updateTask } = require('../controllers/taskController');
+const { verifyToken } = require('../middleware/authMiddleware');
+const { check } = require('express-validator');
 
-// All routes here are protected
-router.use(protect);
+// Create Task (Nested under projects)
+router.post('/projects/:projectId/tasks', 
+    verifyToken,
+    [check('title', 'Title is required').not().isEmpty()],
+    createTask
+);
 
-router.post('/', taskController.createTask);
-router.get('/', taskController.getTasks);
-router.patch('/:id', taskController.updateTaskStatus);
-router.put('/:id', taskController.updateTask);
-router.delete('/:id', taskController.deleteTask);
+// List Tasks (Nested under projects)
+router.get('/projects/:projectId/tasks', verifyToken, listTasks);
+
+// Update Status
+router.patch('/tasks/:taskId/status', verifyToken, updateTaskStatus);
+
+// Update Task
+router.put('/tasks/:taskId', verifyToken, updateTask);
 
 module.exports = router;

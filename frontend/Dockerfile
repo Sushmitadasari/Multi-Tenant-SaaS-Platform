@@ -1,15 +1,20 @@
-# Changed from 18 to 22
-FROM node:22-alpine 
+# Use Node.js image to build the app
+FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
+# Install dependencies
 RUN npm install
 
+# Copy the rest of the frontend code
 COPY . .
 
+# Expose the React port
 EXPOSE 3000
 
-# We set the command in package.json, so this runs that script
-CMD ["npm", "run", "dev"]
+# Start React
+CMD ["npm", "start"]

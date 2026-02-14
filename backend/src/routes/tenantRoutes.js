@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const tenantController = require('../controllers/tenantController');
-const { protect } = require('../middleware/authMiddleware');
+const { getTenantDetails, updateTenant, listTenants } = require('../controllers/tenantController');
+const { verifyToken, authorize } = require('../middleware/authMiddleware');
 
-router.use(protect);
+// Get all tenants (Super Admin only)
+router.get('/', verifyToken, authorize(['super_admin']), listTenants);
 
-router.get('/', tenantController.listTenants);
-router.get('/:id', tenantController.getTenant);
-router.put('/:id', tenantController.updateTenant);
+// Get specific tenant details
+router.get('/:tenantId', verifyToken, getTenantDetails);
+
+// Update tenant
+router.put('/:tenantId', verifyToken, updateTenant);
 
 module.exports = router;

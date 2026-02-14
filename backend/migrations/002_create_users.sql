@@ -1,18 +1,13 @@
-DO $$ BEGIN
-    CREATE TYPE "enum_users_role" AS ENUM ('super_admin', 'tenant_admin', 'user');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-CREATE TABLE IF NOT EXISTS "users" (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "fullName" VARCHAR(255) NOT NULL,
-    "email" VARCHAR(255) NOT NULL,
-    "password" VARCHAR(255) NOT NULL,
-    "role" "enum_users_role" DEFAULT 'user',
-    "tenantId" UUID REFERENCES "tenants" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Up Migration
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL CHECK (role IN ('super_admin', 'tenant_admin', 'user')),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(tenant_id, email)
 );
-
-CREATE UNIQUE INDEX IF NOT EXISTS "users_email_tenantId_unique" ON "users" ("email", "tenantId");

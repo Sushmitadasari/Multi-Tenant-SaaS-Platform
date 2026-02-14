@@ -1,47 +1,34 @@
 const jwt = require('jsonwebtoken');
-const { User, Tenant } = require('../models');
-// Middleware to protect routes and authorize users based on roles
-exports.protect = async (req, res, next) => {
-  let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  }
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'Not authorized to access this route' });
+    return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-
-    const user = await User.findByPk(decoded.id, {
-      include: [{ model: Tenant, as: 'tenant' }]
-    });
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'No user found with this id' });
-    }
-
-    // Attach user and tenantId to request object
-    req.user = user;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // { userId, tenantId, role }
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: 'Not authorized to access this route' });
+    res.status(401).json({ success: false, message: 'Invalid token.' });
   }
 };
 
-exports.authorize = (...roles) => {
+const authorize = (roles = []) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ 
-        success: false, 
-        message: `User role ${req.user.role} is not authorized to access this route`
-      });
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
+
+    if (roles.length && !roles.includes(req.user.role)) {
+      return res.status(403).json({ success: false, message: 'Forbidden: Insufficient permissions' });
+    }
+
     next();
   };
 };
+
+module.exports = { verifyToken, authorize };

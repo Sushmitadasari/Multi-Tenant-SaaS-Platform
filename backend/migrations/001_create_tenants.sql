@@ -1,25 +1,14 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Up Migration
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DO $$ BEGIN
-    CREATE TYPE "enum_tenants_status" AS ENUM ('active', 'suspended');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-    CREATE TYPE "enum_tenants_subscriptionPlan" AS ENUM ('free', 'pro', 'enterprise');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-CREATE TABLE IF NOT EXISTS "tenants" (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "name" VARCHAR(255) NOT NULL,
-    "subdomain" VARCHAR(255) NOT NULL UNIQUE,
-    "status" "enum_tenants_status" DEFAULT 'active',
-    "subscriptionPlan" "enum_tenants_subscriptionPlan" DEFAULT 'free',
-    "maxUsers" INTEGER DEFAULT 5,
-    "maxProjects" INTEGER DEFAULT 3,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS tenants (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    subdomain VARCHAR(255) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'trial')),
+    subscription_plan VARCHAR(50) DEFAULT 'free' CHECK (subscription_plan IN ('free', 'pro', 'enterprise')),
+    max_users INTEGER DEFAULT 5,
+    max_projects INTEGER DEFAULT 3,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,18 +1,17 @@
 FROM node:18-alpine
-# DIRECTORY SETUP
-WORKDIR /app
 
-# INSTALL CURL HERE
+# Install curl for healthcheck
 RUN apk add --no-cache curl
 
+WORKDIR /app
+
 COPY package*.json ./
+
 RUN npm install
 
 COPY . .
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 EXPOSE 5000
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Start command
+CMD ["npm", "start"]
