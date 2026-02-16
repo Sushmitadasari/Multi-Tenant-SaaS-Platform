@@ -44,6 +44,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   # 3. Frontend Service
   frontend:
@@ -58,6 +61,9 @@ services:
       backend:
         condition: service_healthy
     stdin_open: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   db_data:
