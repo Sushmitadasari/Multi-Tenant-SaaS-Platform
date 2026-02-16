@@ -44,7 +44,7 @@ exports.updateTenant = async (req, res) => {
     if (role !== 'super_admin' && role !== 'tenant_admin') {
         return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
-    
+
     // Security Check: Tenant Admin can only update their own tenant
     if (role === 'tenant_admin' && req.user.tenantId !== tenantId) {
         return res.status(403).json({ success: false, message: 'Unauthorized' });
@@ -66,7 +66,7 @@ exports.updateTenant = async (req, res) => {
             values.push(name);
             paramCounter++;
         }
-        
+
         // Only Super Admin can update these fields
         if (role === 'super_admin') {
             if (status) {

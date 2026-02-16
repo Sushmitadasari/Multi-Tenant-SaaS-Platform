@@ -14,7 +14,7 @@ exports.createProject = async (req, res) => {
         // 1. Check Subscription Limits
         const tenantRes = await client.query('SELECT max_projects FROM tenants WHERE id = $1', [tenantId]);
         const projectCountRes = await client.query('SELECT COUNT(*) FROM projects WHERE tenant_id = $1', [tenantId]);
-        
+
         const maxProjects = tenantRes.rows[0].max_projects;
         const currentProjects = parseInt(projectCountRes.rows[0].count);
 
@@ -32,7 +32,7 @@ exports.createProject = async (req, res) => {
         );
 
         await client.query('COMMIT');
-        
+
         logAction(tenantId, userId, 'CREATE_PROJECT', 'project', newProject.rows[0].id, req.ip);
 
         res.status(201).json({
@@ -64,7 +64,7 @@ exports.listProjects = async (req, res) => {
             LEFT JOIN users u ON p.created_by = u.id
             WHERE p.tenant_id = $1
         `;
-        
+
         const values = [tenantId];
         let paramCounter = 2;
 
@@ -83,7 +83,7 @@ exports.listProjects = async (req, res) => {
         const countQuery = `SELECT COUNT(*) FROM projects p WHERE p.tenant_id = $1 ${status ? 'AND p.status = $2' : ''} ${search ? (status ? 'AND p.name ILIKE $3' : 'AND p.name ILIKE $2') : ''}`;
         // Note: Reusing values for count query is tricky with dynamic params, simplified approach:
         // Ideally run a separate simpler count query.
-        
+
         // Simplified Count Execution
         const countResult = await db.query(`SELECT COUNT(*) FROM projects WHERE tenant_id = $1`, [tenantId]);
         const total = parseInt(countResult.rows[0].count);
@@ -136,7 +136,7 @@ exports.updateProject = async (req, res) => {
     try {
         // 1. Verify Project Ownership/Tenancy
         const projectCheck = await db.query('SELECT * FROM projects WHERE id = $1', [projectId]);
-        
+
         if (projectCheck.rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
@@ -198,7 +198,7 @@ exports.deleteProject = async (req, res) => {
 
     try {
         const projectCheck = await db.query('SELECT * FROM projects WHERE id = $1', [projectId]);
-        
+
         if (projectCheck.rows.length === 0) return res.status(404).json({ success: false, message: 'Project not found' });
 
         const project = projectCheck.rows[0];
@@ -226,29 +226,29 @@ exports.deleteProject = async (req, res) => {
 
 // --- ADD THIS FUNCTION ---
 exports.getProject = async (req, res) => {
-  try {
-    const { projectId } = req.params;
-    
-    // Check if project exists and belongs to tenant
-    // We also check if the user has access (for now, tenant-wide access is assumed)
-    const projectRes = await db.query(
-      `SELECT * FROM projects WHERE id = $1 AND tenant_id = $2`,
-      [projectId, req.user.tenantId]
-    );
+    try {
+        const { projectId } = req.params;
 
-    if (projectRes.rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'Project not found' });
+        // Check if project exists and belongs to tenant
+        // We also check if the user has access (for now, tenant-wide access is assumed)
+        const projectRes = await db.query(
+            `SELECT * FROM projects WHERE id = $1 AND tenant_id = $2`,
+            [projectId, req.user.tenantId]
+        );
+
+        if (projectRes.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Project not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                projects: [projectRes.rows[0]] // Sending as array to match your frontend logic
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching project:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching project' });
     }
-
-    res.status(200).json({
-      success: true,
-      data: {
-        projects: [projectRes.rows[0]] // Sending as array to match your frontend logic
-      }
-    });
-
-  } catch (error) {
-    console.error('Error fetching project:', error);
-    res.status(500).json({ success: false, message: 'Server error fetching project' });
-  }
 };

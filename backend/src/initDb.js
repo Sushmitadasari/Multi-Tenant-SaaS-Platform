@@ -33,7 +33,7 @@ const initDb = async () => {
     const passwordHash = await bcrypt.hash('Admin@123', 10);
 
     console.log('⏳ Creating tables...');
-    
+
     // 2. Create Tables
     await client.query(`
       CREATE TABLE IF NOT EXISTS tenants (
@@ -117,7 +117,7 @@ const initDb = async () => {
       ) ON CONFLICT DO NOTHING;
     `, [passwordHash]);
 
-     // D. Create a Project
+    // D. Create a Project
     await client.query(`
       INSERT INTO projects (tenant_id, name, description, status)
       VALUES (

@@ -16,14 +16,14 @@ const Dashboard = () => {
         const projectRes = await api.get('/projects?limit=5');
         const projects = projectRes.data.data.projects;
         const totalProjects = projectRes.data.data.total;
-        
+
         setRecentProjects(projects);
 
         // Simple stats calculation
         // Note: In a real app, you'd want a dedicated /stats endpoint
         setStats({
           projects: totalProjects,
-          tasks: projects.reduce((acc, curr) => acc + curr.taskCount, 0) 
+          tasks: projects.reduce((acc, curr) => acc + curr.taskCount, 0)
         });
       } catch (error) {
         console.error("Error loading dashboard", error);
@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <Container>
       <h2 className="mb-4">Welcome, {user?.fullName}</h2>
-      
+
       {/* Statistics Cards */}
       <Row className="mb-4">
         <Col md={4}>
@@ -53,15 +53,15 @@ const Dashboard = () => {
         </Col>
         <Col md={4}>
           <Card className="text-center shadow-sm">
-             <Card.Body>
+            <Card.Body>
               <Card.Title>My Role</Card.Title>
               <h3><Badge bg="info">{user?.role}</Badge></h3>
             </Card.Body>
           </Card>
         </Col>
         <Col md={4}>
-           <Card className="text-center shadow-sm">
-             <Card.Body>
+          <Card className="text-center shadow-sm">
+            <Card.Body>
               <Card.Title>Organization</Card.Title>
               <h3>{user?.tenantId ? 'Active' : 'System'}</h3>
             </Card.Body>

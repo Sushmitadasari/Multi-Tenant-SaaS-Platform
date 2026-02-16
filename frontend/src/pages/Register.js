@@ -16,7 +16,7 @@ const Register = () => {
     if (formData.adminPassword !== formData.confirmPassword) {
       return setError("Passwords don't match");
     }
-    
+
     const res = await register(formData);
     if (res.success) {
       alert('Registration successful! Please login.');
@@ -34,51 +34,51 @@ const Register = () => {
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Organization Name</Form.Label>
-            <Form.Control 
+            <Form.Control
               required
-              onChange={(e) => setFormData({...formData, tenantName: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, tenantName: e.target.value })}
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Subdomain</Form.Label>
-            <Form.Control 
+            <Form.Control
               required
-              onChange={(e) => setFormData({...formData, subdomain: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, subdomain: e.target.value })}
             />
             <Form.Text className="text-muted">Your URL will be: {formData.subdomain || 'example'}.saas-app.com</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Admin Name</Form.Label>
-            <Form.Control 
+            <Form.Control
               required
-              onChange={(e) => setFormData({...formData, adminFullName: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, adminFullName: e.target.value })}
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Admin Email</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="email" required
-              onChange={(e) => setFormData({...formData, adminEmail: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="password" required
-              onChange={(e) => setFormData({...formData, adminPassword: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Confirm Password</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="password" required
-              onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             />
           </Form.Group>
           <Button variant="success" type="submit" className="w-100">Register</Button>
         </Form>
         <div className="mt-3 text-center">
-            Already have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </div>
       </Card>
     </Container>

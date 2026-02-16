@@ -14,8 +14,8 @@ exports.registerTenant = async (req, res) => {
     // Check if subdomain exists
     const subCheck = await client.query('SELECT id FROM tenants WHERE subdomain = $1', [subdomain]);
     if (subCheck.rows.length > 0) {
-        await client.query('ROLLBACK');
-        return res.status(409).json({ success: false, message: 'Subdomain already exists' });
+      await client.query('ROLLBACK');
+      return res.status(409).json({ success: false, message: 'Subdomain already exists' });
     }
 
     // 1. Create Tenant
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
       if (!user) {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
       }
-    } 
+    }
     // 2. REGULAR USER / TENANT ADMIN CHECK
     else {
       // Find Tenant
@@ -107,17 +107,17 @@ exports.login = async (req, res) => {
 
     // 4. Generate Token
     const token = jwt.sign(
-      { 
-        userId: user.id, 
-        tenantId: user.tenant_id, 
-        role: user.role 
+      {
+        userId: user.id,
+        tenantId: user.tenant_id,
+        role: user.role
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
     if (user.tenant_id) {
-        logAction(user.tenant_id, user.id, 'LOGIN', 'user', user.id, req.ip);
+      logAction(user.tenant_id, user.id, 'LOGIN', 'user', user.id, req.ip);
     }
 
     res.status(200).json({
@@ -145,11 +145,11 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const userRes = await db.query('SELECT id, email, full_name, role, is_active FROM users WHERE id = $1', [req.user.userId]);
-    
+
     let tenantData = null;
     if (req.user.tenantId) {
-        const tenantRes = await db.query('SELECT id, name, subdomain, subscription_plan, max_users, max_projects FROM tenants WHERE id = $1', [req.user.tenantId]);
-        tenantData = tenantRes.rows[0];
+      const tenantRes = await db.query('SELECT id, name, subdomain, subscription_plan, max_users, max_projects FROM tenants WHERE id = $1', [req.user.tenantId]);
+      tenantData = tenantRes.rows[0];
     }
 
     if (userRes.rows.length === 0) return res.status(404).json({ success: false, message: 'User not found' });
@@ -168,8 +168,8 @@ exports.getMe = async (req, res) => {
 
 // API 4: Logout
 exports.logout = (req, res) => {
-    if (req.user && req.user.tenantId) {
-        logAction(req.user.tenantId, req.user.userId, 'LOGOUT', 'user', req.user.userId, req.ip);
-    }
-    res.status(200).json({ success: true, message: 'Logged out successfully' });
+  if (req.user && req.user.tenantId) {
+    logAction(req.user.tenantId, req.user.userId, 'LOGOUT', 'user', req.user.userId, req.ip);
+  }
+  res.status(200).json({ success: true, message: 'Logged out successfully' });
 };

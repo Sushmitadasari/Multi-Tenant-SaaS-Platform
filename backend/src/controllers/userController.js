@@ -20,7 +20,7 @@ exports.addUser = async (req, res) => {
         // 1. Check Subscription Limits
         const tenantRes = await client.query('SELECT max_users FROM tenants WHERE id = $1', [tenantId]);
         const userCountRes = await client.query('SELECT COUNT(*) FROM users WHERE tenant_id = $1', [tenantId]);
-        
+
         const maxUsers = tenantRes.rows[0].max_users;
         const currentUsers = parseInt(userCountRes.rows[0].count);
 
@@ -46,7 +46,7 @@ exports.addUser = async (req, res) => {
         );
 
         await client.query('COMMIT');
-        
+
         logAction(tenantId, req.user.userId, 'CREATE_USER', 'user', newUser.rows[0].id, req.ip);
 
         res.status(201).json({
@@ -123,7 +123,7 @@ exports.listUsers = async (req, res) => {
 exports.updateUser = async (req, res) => {
     const { userId } = req.params;
     const { fullName, role, isActive } = req.body;
-    
+
     // Security Checks
     // 1. Tenant Admin can update anyone in their tenant
     // 2. Regular User can only update their own fullName
@@ -138,7 +138,7 @@ exports.updateUser = async (req, res) => {
         // Verify user belongs to requester's tenant (Data Isolation)
         const userCheck = await db.query('SELECT tenant_id FROM users WHERE id = $1', [userId]);
         if (userCheck.rows.length === 0) return res.status(404).json({ success: false, message: 'User not found' });
-        
+
         if (userCheck.rows[0].tenant_id !== req.user.tenantId && req.user.role !== 'super_admin') {
             return res.status(403).json({ success: false, message: 'Unauthorized access to other tenant data' });
         }
@@ -222,7 +222,7 @@ exports.deleteUser = async (req, res) => {
         await client.query('DELETE FROM users WHERE id = $1', [userId]);
 
         await client.query('COMMIT');
-        
+
         logAction(req.user.tenantId, req.user.userId, 'DELETE_USER', 'user', userId, req.ip);
 
         res.status(200).json({ success: true, message: 'User deleted successfully' });

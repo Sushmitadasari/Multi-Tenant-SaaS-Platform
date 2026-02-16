@@ -28,39 +28,39 @@ const Login = () => {
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Tenant Subdomain</Form.Label>
-            <Form.Control 
-              type="text" 
+            <Form.Control
+              type="text"
               placeholder="Leave empty for Super Admin"
               value={formData.subdomain}
-              onChange={(e) => setFormData({...formData, subdomain: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, subdomain: e.target.value })}
             />
             <Form.Text className="text-muted">
               (Leave empty if logging in as Super Admin)
             </Form.Text>
           </Form.Group>
-          
+
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
-            <Form.Control 
-              type="email" 
+            <Form.Control
+              type="email"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required 
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
-            <Form.Control 
-              type="password" 
+            <Form.Control
+              type="password"
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              required 
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
             />
           </Form.Group>
           <Button variant="primary" type="submit" className="w-100">Login</Button>
         </Form>
         <div className="mt-3 text-center">
-            Don't have an account? <Link to="/register">Register Tenant</Link>
+          Don't have an account? <Link to="/register">Register Tenant</Link>
         </div>
       </Card>
     </Container>
