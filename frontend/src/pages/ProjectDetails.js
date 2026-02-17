@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Card, Badge, Row, Col, ListGroup, Alert } from 'react-bootstrap';
+import { Container, Button, Card, Badge, Row, Col, ListGroup, Alert, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import TaskModal from '../components/TaskModal';
@@ -11,12 +11,10 @@ const ProjectDetails = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [debugError, setDebugError] = useState(null);
-  
-  // Task Modal State
+
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
 
-  // --- HELPER: Get Config with Token ---
   const getAuthConfig = () => {
     const token = localStorage.getItem('token');
     return { headers: { Authorization: `Bearer ${token}` } };
@@ -26,20 +24,12 @@ const ProjectDetails = () => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      
-      console.log("Fetching Project ID:", id);
-
-      // 1. Fetch Project
       const projRes = await api.get(`/projects/${id}`, config);
       setProject(projRes.data.data.projects ? projRes.data.data.projects[0] : projRes.data.data);
 
-      // 2. Fetch Tasks
       const taskRes = await api.get(`/projects/${id}/tasks`, config);
       setTasks(taskRes.data.data.tasks);
-      
     } catch (err) {
-      console.error(err);
-      // Capture the exact error message from the backend
       const msg = err.response?.status + " " + (err.response?.data?.message || err.message);
       setDebugError(msg);
     } finally {
@@ -76,129 +66,236 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
-    if(window.confirm("Delete this task?")) {
-        alert("Delete logic not implemented in this demo.");
-    }
-  };
+  if (loading) return (
+    <div style={styles.loaderWrapper}>
+      <Spinner animation="grow" variant="info" />
+    </div>
+  );
 
-  if (loading) return <Container className="mt-5">Loading...</Container>;
-
-  // --- Error Screen ---
   if (debugError) {
     return (
-        <Container className="mt-5">
-            <Alert variant="danger">
-                <h4>Error Loading Project</h4>
-                <p><strong>Backend Message:</strong> {debugError}</p>
-                <p><strong>URL Tried:</strong> /projects/{id}</p>
-                <Button variant="outline-danger" onClick={() => navigate('/projects')}>Back to List</Button>
-            </Alert>
-        </Container>
+      <Container className="mt-5">
+        <Alert variant="danger" className="bg-dark text-danger border-danger">
+          <h4 className="fw-bold">Error Loading Project</h4>
+          <p>{debugError}</p>
+          <Button variant="outline-danger" onClick={() => navigate('/projects')}>Back to List</Button>
+        </Alert>
+      </Container>
     );
   }
 
-  if (!project) return <Container className="mt-5">Project not found (Data is null)</Container>;
+  if (!project) return <Container className="mt-5 text-white">Project not found</Container>;
 
   return (
-    <Container>
-      <Button variant="outline-secondary" className="mb-3" onClick={() => navigate('/projects')}>
-        &larr; Back to Projects
-      </Button>
+    <div style={styles.pageWrapper}>
+      {/* High-Level CSS Injections */}
+      <style>
+        {`
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-in { animation: slideUp 0.5s ease forwards; }
+          
+          .glass-panel {
+            background: rgba(255, 255, 255, 0.03) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 16px !important;
+          }
 
-      <Card className="mb-4 shadow-sm border-0 bg-light">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-start">
-            <div>
-              <h2>{project.name}</h2>
-              <p className="text-muted">{project.description}</p>
-            </div>
-            <Badge bg={project.status === 'active' ? 'success' : 'secondary'}>
-              {project.status}
-            </Badge>
-          </div>
-        </Card.Body>
-      </Card>
+          .kanban-column {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 15px;
+            min-height: 70vh;
+          }
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4>Tasks</h4>
-        <Button onClick={() => { setEditingTask(null); setShowModal(true); }}>+ Add Task</Button>
-      </div>
+          .task-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: grab;
+            margin-bottom: 12px;
+            color: #fff !important;
+          }
 
-      <Row>
-        {['todo', 'in_progress', 'completed'].map(status => (
-          <Col md={4} key={status}>
-            <Card className="h-100">
-              <Card.Header className="text-capitalize fw-bold text-center">
-                {status.replace('_', ' ')}
-              </Card.Header>
-              <ListGroup variant="flush">
-                {tasks.filter(t => t.status === status).map(task => (
-                  <ListGroup.Item key={task.id} className="d-flex flex-column gap-2">
-                    <div className="d-flex justify-content-between">
-                      <span className="fw-bold">{task.title}</span>
-                      <Badge bg={task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'}>
-                        {task.priority}
-                      </Badge>
-                    </div>
-                    {task.assignedTo && (
-                      <small className="text-muted">Assigned: {task.assignedTo.fullName}</small>
-                    )}
-                    
-                    <div className="d-flex justify-content-between mt-2">
-                      <Button size="sm" variant="outline-primary" onClick={() => { setEditingTask(task); setShowModal(true); }}>
-                        Edit
-                      </Button>
-                      
-                      {/* --- SMART ARROW LOGIC START --- */}
-                      <div>
-                        {/* LEFT ARROW (Go Back) */}
-                        {status !== 'todo' && (
-                          <Button 
-                            size="sm" 
-                            variant="light" 
-                            className="me-1" 
-                            // If Completed -> go back to In Progress. Else -> go back to Todo.
-                            onClick={() => handleStatusChange(task.id, status === 'completed' ? 'in_progress' : 'todo')}
+          .task-card:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: #0dcaf0 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+          }
+
+          .btn-modern {
+            border-radius: 10px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.2s;
+          }
+
+          .status-header {
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            color: #8892b0;
+            margin-bottom: 20px;
+          }
+
+          body { background-color: #0a192f; }
+        `}
+      </style>
+
+      <Container className="py-4">
+        {/* Header Section */}
+        <div className="d-flex justify-content-between align-items-center mb-4 animate-in">
+          <Button
+            variant="link"
+            className="text-info p-0 text-decoration-none"
+            onClick={() => navigate('/projects')}
+          >
+            &larr; Back to Workspace
+          </Button>
+          <Button
+            className="btn-modern shadow-sm"
+            variant="info"
+            onClick={() => { setEditingTask(null); setShowModal(true); }}
+          >
+            + Create Task
+          </Button>
+        </div>
+
+        {/* Project Hero Card */}
+        <Card className="glass-panel text-white mb-5 animate-in" style={{ animationDelay: '0.1s' }}>
+          <Card.Body className="p-4">
+            <Row className="align-items-center">
+              <Col md={8}>
+                <Badge bg="info" className="mb-2 text-dark px-3 py-2">Project Overview</Badge>
+                <h1 className="fw-bold display-6">{project.name}</h1>
+                <p className="text-muted mb-0">{project.description}</p>
+              </Col>
+              <Col md={4} className="text-md-end mt-3 mt-md-0">
+                <div className="d-flex flex-column align-items-md-end">
+                  <span className="text-muted small">STATUS</span>
+                  <h4 className="text-capitalize text-success">{project.status}</h4>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+
+        {/* Kanban Board */}
+        <Row className="g-4 animate-in" style={{ animationDelay: '0.2s' }}>
+          {['todo', 'in_progress', 'completed'].map((status, idx) => (
+            <Col lg={4} key={status}>
+              <div className="kanban-column">
+                <div className="d-flex justify-content-between align-items-center px-2 mb-3">
+                  <h6 className="status-header fw-bold text-uppercase mb-0">
+                    {status.replace('_', ' ')}
+                    <span className="ms-2 opacity-50">({tasks.filter(t => t.status === status).length})</span>
+                  </h6>
+                  <div style={{ height: '2px', flexGrow: 1, background: 'rgba(255,255,255,0.05)', margin: '0 15px' }}></div>
+                </div>
+
+                <div className="task-list">
+                  {tasks.filter(t => t.status === status).map(task => (
+                    <Card key={task.id} className="task-card">
+                      <Card.Body className="p-3">
+                        <div className="d-flex justify-content-between mb-2">
+                          <Badge
+                            bg={task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'}
+                            style={{ fontSize: '0.65rem' }}
                           >
-                            &larr;
-                          </Button>
+                            {task.priority.toUpperCase()}
+                          </Badge>
+                          <small className="text-muted" style={{ fontSize: '0.7rem' }}>#{task.id.slice(-4)}</small>
+                        </div>
+
+                        <h6 className="fw-bold mb-1">{task.title}</h6>
+
+                        {task.assignedTo && (
+                          <div className="d-flex align-items-center mt-3">
+                            <div className="bg-info rounded-circle me-2 d-flex align-items-center justify-content-center text-dark fw-bold" style={{ width: 22, height: 22, fontSize: '0.6rem' }}>
+                              {task.assignedTo.fullName.charAt(0)}
+                            </div>
+                            <small className="text-muted">{task.assignedTo.fullName}</small>
+                          </div>
                         )}
 
-                        {/* RIGHT ARROW (Go Forward) */}
-                        {status !== 'completed' && (
-                          <Button 
-                            size="sm" 
-                            variant="light" 
-                            // If Todo -> go to In Progress. Else -> go to Completed.
-                            onClick={() => handleStatusChange(task.id, status === 'todo' ? 'in_progress' : 'completed')}
+                        <hr className="my-3 opacity-10" />
+
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Button
+                            size="sm"
+                            variant="link"
+                            className="text-info p-0 text-decoration-none small"
+                            onClick={() => { setEditingTask(task); setShowModal(true); }}
                           >
-                            &rarr;
+                            Details
                           </Button>
-                        )}
-                      </div>
-                      {/* --- SMART ARROW LOGIC END --- */}
 
+                          <div className="btn-group shadow-sm">
+                            {status !== 'todo' && (
+                              <Button
+                                size="sm"
+                                variant="dark"
+                                className="border-secondary text-white px-2"
+                                onClick={() => handleStatusChange(task.id, status === 'completed' ? 'in_progress' : 'todo')}
+                              >
+                                ❮
+                              </Button>
+                            )}
+                            {status !== 'completed' && (
+                              <Button
+                                size="sm"
+                                variant="dark"
+                                className="border-secondary text-white px-2"
+                                onClick={() => handleStatusChange(task.id, status === 'todo' ? 'in_progress' : 'completed')}
+                              >
+                                ❯
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+
+                  {tasks.filter(t => t.status === status).length === 0 && (
+                    <div className="text-center py-5 opacity-25">
+                      <small className="text-white">No tasks here</small>
                     </div>
-                  </ListGroup.Item>
-                ))}
-                {tasks.filter(t => t.status === status).length === 0 && (
-                  <div className="p-3 text-center text-muted small">No tasks</div>
-                )}
-              </ListGroup>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                  )}
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Container>
 
-      <TaskModal 
-        show={showModal} 
+      <TaskModal
+        show={showModal}
         onHide={() => setShowModal(false)}
         onSave={handleCreateOrUpdateTask}
         task={editingTask}
       />
-    </Container>
+    </div>
   );
+};
+
+const styles = {
+  pageWrapper: {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #0a192f 0%, #112240 100%)',
+    color: '#e6f1ff',
+    paddingBottom: '50px'
+  },
+  loaderWrapper: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: '#0a192f'
+  }
 };
 
 export default ProjectDetails;
