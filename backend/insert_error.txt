@@ -1,0 +1,14 @@
+FAILED: null value in column "password" of relation "users" violates not-null constraint
+{
+  "length": 392,
+  "name": "error",
+  "severity": "ERROR",
+  "code": "23502",
+  "detail": "Failing row contains (99236201-87e0-4476-9756-dc4f3cbe492f, testuser_1771323004403@example.com, null, user, c090876d-0e3b-47c8-b282-97cde1039468, hash, Test User, t, 2026-02-17 10:10:04.404827, 2026-02-17 10:10:04.404827).",
+  "schema": "public",
+  "table": "users",
+  "column": "password",
+  "file": "execMain.c",
+  "line": "2023",
+  "routine": "ExecConstraints"
+}

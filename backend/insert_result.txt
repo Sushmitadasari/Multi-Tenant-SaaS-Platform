@@ -1,0 +1,1 @@
+SUCCESS: {"id":"b9810cf0-5ac7-4d60-9307-58ccc264674d","full_name":"Test User","created_at":"2026-02-17T10:11:22.360Z"}
